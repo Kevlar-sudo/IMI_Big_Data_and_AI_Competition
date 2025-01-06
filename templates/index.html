@@ -1,16 +1,19 @@
-{% extends "base.html" %}
-{% block content %}
-  <h1>Welcome to My Flask App</h1>
-  <p>This is the home page.</p>
-
-  <h2>Items:</h2>
-  <ul>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SQLite CRUD</title>
+</head>
+<body>
+    <h1>All Items</h1>
+    <ul>
     {% for item in items %}
-    <li>
-      {{ item }} 
-      <a href="{{ url_for('update_item', item_id=loop.index0) }}">Update</a>
-      <a href="{{ url_for('delete_item', item_id=loop.index0) }}">Delete</a>
-    </li>
+        <li>
+            {{ item[1] }} <!-- The 'name' is at index 1 of the tuple -->
+            <a href="{{ url_for('update_item', item_id=item[0]) }}">Update</a>
+            <a href="{{ url_for('delete_item', item_id=item[0]) }}">Delete</a>
+        </li>
     {% endfor %}
-  </ul>
-{% endblock %}
+    </ul>
+    <a href="{{ url_for('create_item') }}">Create New Item</a>
+</body>
+</html>
