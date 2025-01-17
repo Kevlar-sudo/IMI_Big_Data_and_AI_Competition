@@ -3,7 +3,7 @@ import os
 import pandas as pd
 
 DB_NAME = 'mydatabase.db'
-CSV_FILE_PATH = './eft.csv'  # Update this path if the file is moved
+CSV_FILE_PATH = 'csv_files\eft.csv'  # Update this path if the file is moved
 TABLE_NAME = 'items'  # Table name
 
 
