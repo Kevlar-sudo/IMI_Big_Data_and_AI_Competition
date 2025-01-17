@@ -11,13 +11,13 @@ def init_db(csv_path, db_name, table_name):
     """Initialize the SQLite database and create a table with specified columns."""
     # Desired column names and types
     column_definitions = {
-        "eft_id": "INTEGER",
-        "customer_id": "INTEGER",
-        "amount_cad": "REAL",
-        "debit_credit": "TEXT",
-        "transaction_date": "TEXT",
-        "transaction_time": "TEXT",
-    }
+    "eft_id": "TEXT PRIMARY KEY",
+    "customer_id": "INTEGER",
+    "amount_cad": "REAL",
+    "debit_credit": "TEXT",
+    "transaction_date": "TEXT",
+    "transaction_time": "TEXT",
+}
 
     # Connect to the SQLite database
     conn = sqlite3.connect(db_name)

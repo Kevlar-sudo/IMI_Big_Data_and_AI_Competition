@@ -9,7 +9,7 @@
     <h1>Lookup Item by EFT ID</h1>
     <form method="POST" action="{{ url_for('lookup_item') }}">
         <label for="eftId">EFT ID:</label>
-        <input type="text" id="eftId" name="eftId" required>
+        <input type="number" id="eftId" name="eftId" required>
         <button type="submit">Lookup</button>
     </form>
 
