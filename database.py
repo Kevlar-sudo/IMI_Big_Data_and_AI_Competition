@@ -3,23 +3,129 @@ import os
 import pandas as pd
 
 DB_NAME = 'mydatabase.db'
-CSV_FILE_PATH = 'csv_files\eft.csv'  # Update this path if the file is moved
-TABLE_NAME = 'items'  # Table name
 
-
-def init_db(csv_path, db_name, table_name):
-    """Initialize the SQLite database and create a table with specified columns."""
-    # Desired column names and types
-    column_definitions = {
-    "eft_id": "TEXT PRIMARY KEY",
-    "customer_id": "INTEGER",
-    "amount_cad": "REAL",
-    "debit_credit": "TEXT",
-    "transaction_date": "TEXT",
-    "transaction_time": "TEXT",
+# Define file paths and table configurations
+FILE_TABLE_MAPPING = {
+    "abm.csv": {
+        "table_name": "abm",
+        "columns": {
+            "abm_id": "TEXT PRIMARY KEY",
+            "customer_id": "TEXT",
+            "amount_cad": "REAL",
+            "debit_credit": "TEXT",
+            "cash_indicator": "BOOLEAN",
+            "country": "TEXT",
+            "province": "TEXT",
+            "city": "TEXT",
+            "transaction_date": "TEXT",
+            "transaction_time": "TEXT"
+        }
+    },
+    "all_transactions_month.csv": {
+        "table_name": "all_transactions_month",
+        "columns": {
+            "customer_id": "TEXT",
+            "transaction_id": "TEXT PRIMARY KEY",
+            "transaction_type": "TEXT",
+            "amount_cad": "REAL",
+            "debit_credit": "TEXT",
+            "month": "TEXT"
+        }
+    },
+    "card.csv": {
+        "table_name": "card",
+        "columns": {
+            "card_trxn_id": "TEXT PRIMARY KEY",
+            "customer_id": "TEXT",
+            "amount_cad": "REAL",
+            "debit_credit": "TEXT",
+            "merchant_category": "TEXT",
+            "ecommerce_ind": "BOOLEAN",
+            "country": "TEXT",
+            "province": "TEXT",
+            "city": "TEXT",
+            "transaction_date": "TEXT",
+            "transaction_time": "TEXT"
+        }
+    },
+    "cheque.csv": {
+        "table_name": "cheque",
+        "columns": {
+            "cheque_id": "TEXT PRIMARY KEY",
+            "customer_id": "TEXT",
+            "amount_cad": "REAL",
+            "debit_credit": "TEXT",
+            "transaction_date": "TEXT"
+        }
+    },
+    "eft.csv": {
+        "table_name": "eft",
+        "columns": {
+            "eft_id": "TEXT PRIMARY KEY",
+            "customer_id": "TEXT",
+            "amount_cad": "REAL",
+            "debit_credit": "TEXT",
+            "transaction_date": "TEXT",
+            "transaction_time": "TEXT"
+        }
+    },
+    "emt.csv": {
+        "table_name": "emt",
+        "columns": {
+            "emt_id": "TEXT PRIMARY KEY",
+            "customer_id": "TEXT",
+            "amount_cad": "REAL",
+            "debit_credit": "TEXT",
+            "transaction_date": "TEXT",
+            "transaction_time": "TEXT"
+        }
+    },
+    "kyc_industry_codes.csv": {
+        "table_name": "kyc_industry_codes",
+        "columns": {
+            "industry_code": "TEXT PRIMARY KEY",
+            "industry": "TEXT"
+        }
+    },
+    "kyc.csv": {
+        "table_name": "kyc",
+        "columns": {
+            "customer_id": "TEXT PRIMARY KEY",
+            "country": "TEXT",
+            "province": "TEXT",
+            "city": "TEXT",
+            "industry_code": "TEXT",
+            "employee_count": "INTEGER",
+            "sales": "REAL",
+            "established_date": "TEXT",
+            "onboard_date": "TEXT"
+        }
+    },
+    "major_group_classification.csv": {
+        "table_name": "major_group_classification",
+        "columns": {
+            "major_group": "TEXT PRIMARY KEY",
+            "name": "TEXT"
+        }
+    },
+    "wire.csv": {
+        "table_name": "wire",
+        "columns": {
+            "wire_id": "TEXT PRIMARY KEY",
+            "customer_id": "TEXT",
+            "amount_cad": "REAL",
+            "debit_credit": "TEXT",
+            "transaction_date": "TEXT",
+            "transaction_time": "TEXT"
+        }
+    }
 }
 
-    # Connect to the SQLite database
+CSV_FOLDER = 'csv_files/'
+
+
+def init_table(db_name, table_name, columns):
+    """Initialize the SQLite database and create a table with specified columns."""
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
 
@@ -28,7 +134,7 @@ def init_db(csv_path, db_name, table_name):
     print(f"Existing table '{table_name}' has been dropped.")
 
     # Create the table with specified schema
-    column_definitions_sql = ", ".join([f"{col} {dtype}" for col, dtype in column_definitions.items()])
+    column_definitions_sql = ", ".join([f"{col} {dtype}" for col, dtype in columns.items()])
     create_table_sql = f"CREATE TABLE {table_name} ({column_definitions_sql});"
     print(f"Creating table with SQL: {create_table_sql}")
     cursor.execute(create_table_sql)
@@ -38,13 +144,12 @@ def init_db(csv_path, db_name, table_name):
     conn.close()
 
 
-def load_csv_to_db(csv_path, db_name, table_name):
+def load_csv_to_db(csv_path, db_name, table_name, expected_columns):
     """Load data from a CSV file into the SQLite database."""
     # Load the CSV file into a pandas DataFrame
     df = pd.read_csv(csv_path)
 
     # Ensure the column names match the desired schema
-    expected_columns = ["eft_id", "customer_id", "amount_cad", "debit_credit", "transaction_date", "transaction_time"]
     if not all(col in df.columns for col in expected_columns):
         raise ValueError(f"The CSV file is missing required columns. Expected: {expected_columns}")
 
@@ -66,10 +171,26 @@ def load_csv_to_db(csv_path, db_name, table_name):
 
 
 if __name__ == "__main__":
-    # Step 1: Initialize the database and create the table
-    init_db(CSV_FILE_PATH, DB_NAME, TABLE_NAME)
+    for file_name, config in FILE_TABLE_MAPPING.items():
+        csv_path = os.path.join(CSV_FOLDER, file_name)
+        table_name = config["table_name"]
+        columns = config["columns"]
 
-    # Step 2: Load CSV data into the database
-    load_csv_to_db(CSV_FILE_PATH, DB_NAME, TABLE_NAME)
+        print(f"\n--- Processing {file_name} ---")
+        
+        # Check if the file exists
+        if not os.path.exists(csv_path):
+            print(f"Error: File not found -> {csv_path}")
+            continue
 
-    print("Database initialized and data loaded!")
+        try:
+            # Step 1: Initialize the table
+            init_table(DB_NAME, table_name, columns)
+
+            # Step 2: Load CSV data into the database
+            load_csv_to_db(csv_path, DB_NAME, table_name, list(columns.keys()))
+        except Exception as e:
+            print(f"Error processing {file_name}: {e}")
+
+    print("\nAll tables have been initialized, and data has been loaded!")
+

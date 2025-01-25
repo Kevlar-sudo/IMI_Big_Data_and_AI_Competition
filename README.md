@@ -21,7 +21,11 @@ Ensure you have the following installed:
 
 ## Run App:
 To Run the web-app, in terminal type:
+*- python database.py 
 - python app.py 
+
+*: You will need to first run the database inserter python script to be able to run critical functions of the application
+
 
 ## Access App:
 In Browser:

@@ -20,7 +20,7 @@ def lookup_item():
             conn = sqlite3.connect(DB_NAME)
             c = conn.cursor()
             # Query the database for the specified eft_id
-            c.execute("SELECT * FROM items WHERE eft_id=?", (eft_id,))
+            c.execute("SELECT * FROM eft WHERE eft_id=?", (eft_id,))
             record = c.fetchone()
             conn.close()
     return render_template('lookup_item.html', record=record)
