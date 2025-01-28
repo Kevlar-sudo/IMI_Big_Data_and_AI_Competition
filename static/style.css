@@ -1,15 +1,80 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-  }
-  nav {
-    background-color: #333;
-    padding: 1rem;
-  }
-  nav a {
-    color: #fff;
-    margin-right: 1rem;
-    text-decoration: none;
-  }
-  
+    font-family: sans-serif;
+}
+
+#filters {
+    padding: 10px; /* Add overall padding to the filters section */
+    border: 1px solid #ccc; /* Add a border for visual separation */
+    margin-bottom: 20px; /* Add margin to separate from the alerts */
+}
+
+#filters h3 {
+    margin-top: 0; /* Remove default top margin for h3 */
+    padding-bottom: 10px;
+}
+
+#filters > div {
+    margin-bottom: 10px; /* Add margin between filter groups */
+}
+
+#filters label {
+    display: block; /* Place labels on their own line */
+    margin-bottom: 5px; /* Add margin below labels */
+    font-weight: bold;
+}
+
+#filters input[type="text"],
+#filters input[type="number"],
+#filters select {
+    width: 100%; /* Make input fields fill the width */
+    padding: 5px; /* Add padding inside input fields */
+    border: 1px solid #ccc;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+/* Style for min-max filter pairs */
+#filters .min-max-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#filters .min-max-group input[type="number"] {
+    width: 48%; /* Adjust width as needed */
+}
+
+#filters .min-max-group label {
+    flex: 0 0 auto; /* Prevent the label from shrinking */
+    margin-right: 10px;
+}
+
+#apply-filters-btn {
+    padding: 8px 15px;
+    background-color: #4CAF50; /* Green */
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#alert-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.alert-card {
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 300px;
+}
+
+.high {
+    border-left: 5px solid red;
+}
+
+.medium {
+    border-left: 5px solid orange;
+}
+
+.low {
+    border-left: 5px solid green;
+}

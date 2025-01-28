@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TDIS - AML Alert Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>AML Alert Dashboard</h1>
+    <div id="filters">
+        <h3>Filters</h3>
+        <div>
+            <label for="customer-id-filter">Customer ID:</label>
+            <input type="text" id="customer-id-filter">
+        </div>
+        <div>
+            <label for="transaction-type-filter">Transaction Type:</label>
+            <select id="transaction-type-filter">
+                <option value="">All</option>
+                <option value="ATM">ATM</option>
+                <option value="EFT">EFT</option>
+                <option value="EMT">EMT</option>
+                <option value="WIRE">WIRE</option>
+                <option value="CARD">CARD</option>
+                <option value="CHEQUE">CHEQUE</option>
+             </select>
+        </div>
+        <div class="min-max-group">
+            <label for="amount-filter">Amount (CAD):</label>
+            <input type="number" id="amount-min-filter" placeholder="Min">
+            <label>-</label>
+            <input type="number" id="amount-max-filter" placeholder="Max">
+        </div>
+        <div class="min-max-group">
+            <label for="risk-score-filter">Risk Score:</label>
+            <input type="number" id="risk-score-min-filter" placeholder="Min">
+            <label>-</label>
+            <input type="number" id="risk-score-max-filter" placeholder="Max">
+        </div>
+        <div>
+            <label for="rule-based-flag-filter">Rule-Based Flag:</label>
+            <select id="rule-based-flag-filter">
+                <option value="">All</option>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+        </div>
+        <div>
+            <label for="cash-indicator-filter">Cash Indicator:</label>
+            <select id="cash-indicator-filter">
+                <option value="">All</option>
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+            </select>
+        </div>
+        <div>
+            <label for="country-filter">Country:</label>
+            <input type="text" id="country-filter">
+        </div>
+        <div>
+            <label for="province-filter">Province:</label>
+            <input type="text" id="province-filter">
+        </div>
+        <div>
+            <label for="city-filter">City:</label>
+            <input type="text" id="city-filter">
+        </div>
+        <div>
+            <label for="industry-code-filter">Industry Code:</label>
+            <input type="text" id="industry-code-filter">
+        </div>
+        <div class="min-max-group">
+            <label for="employee-count-filter">Employee Count:</label>
+            <input type="number" id="employee-count-min-filter" placeholder="Min">
+            <label>-</label>
+            <input type="number" id="employee-count-max-filter" placeholder="Max">
+        </div>
+        <div class="min-max-group">
+            <label for="sales-filter">Sales:</label>
+            <input type="number" id="sales-min-filter" placeholder="Min">
+            <label>-</label>
+            <input type="number" id="sales-max-filter" placeholder="Max">
+        </div>
+        <button id="apply-filters-btn">Apply Filters</button>
+    </div>
+    <div id="alert-list">
+        </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
