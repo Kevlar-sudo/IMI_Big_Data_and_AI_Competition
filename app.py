@@ -177,6 +177,25 @@ def lookup_item():
             conn.close()
     return render_template('lookup_item.html', record=record)
 
+@app.route('/alert_details')
+def alert_details_page():
+    return render_template('alert_details.html')
+
+@app.route('/get_alert/<alert_id>')
+def get_alert_details(alert_id):
+    # Assuming 'abm' is your table and 'abm_id' is the unique identifier
+    alert = None
+    for a in alerts_data:
+        if a['abm_id'] == alert_id:
+            alert = a
+            break
+
+    if alert:
+        # Remove any non-serializable objects
+        return jsonify(alert)
+    else:
+        return jsonify({'error': 'Alert not found'}), 404
+
 if __name__ == '__main__':
     app.run(debug=True)
 
