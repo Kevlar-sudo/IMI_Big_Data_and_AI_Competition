@@ -21,7 +21,8 @@ Ensure you have the following installed:
 
 ## Run App:
 To Run the web-app, in terminal type:
-*- python database.py 
+- python database.py
+- python user_table.py
 - python app.py 
 
 *: You will need to first run the database inserter python script to be able to run critical functions of the application
