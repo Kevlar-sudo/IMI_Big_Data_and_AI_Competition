@@ -76,6 +76,12 @@ def register():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+
+        # Check if the two password fields match
+        if password != confirm_password:
+            flash("Passwords do not match. Please try again.", "danger")
+            return redirect(url_for("register"))
 
         # Hash the password for storage
         hashed_pw = generate_password_hash(password)
@@ -88,11 +94,11 @@ def register():
             # Attempt to insert new user
             c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_pw))
             conn.commit()
-            flash("Registration successful! You can now log in.", "success")
+            #flash("Registration successful! You can now log in.", "success")
             return redirect(url_for("login"))
 
         except sqlite3.IntegrityError:
-            # This error occurs if username is not unique (violates UNIQUE constraint)
+            # This error occurs if username is not unique (UNIQUE constraint in DB)
             flash("Username already taken. Please choose a different one.", "danger")
             return redirect(url_for("register"))
 
@@ -101,6 +107,7 @@ def register():
 
     # If GET, just render the registration page
     return render_template("registration.html")
+
 
 
 
