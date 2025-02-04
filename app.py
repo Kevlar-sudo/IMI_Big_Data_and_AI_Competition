@@ -1,3 +1,4 @@
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, flash
 import pandas as pd
 from sklearn.ensemble import IsolationForest
@@ -23,29 +24,38 @@ mock_users = {
 
 # -------------- LOGIN ROUTES --------------
 
-@app.route("/auth-login", methods=["GET", "POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    """
-    Displays the login form on GET.
-    Processes the form on POST (checks user credentials).
-    """
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        
-        # Get the hashed password from mock_users (or your DB)
-        user_hashed_pw = mock_users.get(username)
 
-        if user_hashed_pw and check_password_hash(user_hashed_pw, password):
+        # Fetch hashed password from database
+        conn = sqlite3.connect(DB_NAME)
+        c = conn.cursor()
+        c.execute("SELECT password FROM users WHERE username = ?", (username,))
+        row = c.fetchone()
+        conn.close()
+
+        if row is None:
+            # No user found with that username
+            flash("Invalid username or password.", "danger")
+            return redirect(url_for("login"))
+
+        user_hashed_pw = row[0]
+
+        if check_password_hash(user_hashed_pw, password):
+            # Password correct
             session["username"] = username
             flash("You have successfully logged in.", "success")
             return redirect(url_for("index"))
         else:
-            flash("Invalid username or password. Please try again.", "danger")
+            flash("Invalid username or password.", "danger")
             return redirect(url_for("login"))
 
-    # If GET, just render the login page
-    return render_template("auth_login.html")
+    # if GET
+    return render_template("login.html")
+
 
 
 @app.route("/logout")
@@ -56,6 +66,45 @@ def logout():
     session.pop("username", None)
     flash("You have been logged out.", "info")
     return redirect(url_for("login"))
+
+
+
+# -------------- REGISTRATION ROUTES --------------
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        # Hash the password for storage
+        hashed_pw = generate_password_hash(password)
+
+        # Insert the user into the database
+        conn = sqlite3.connect(DB_NAME)
+        c = conn.cursor()
+
+        try:
+            # Attempt to insert new user
+            c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_pw))
+            conn.commit()
+            flash("Registration successful! You can now log in.", "success")
+            return redirect(url_for("login"))
+
+        except sqlite3.IntegrityError:
+            # This error occurs if username is not unique (violates UNIQUE constraint)
+            flash("Username already taken. Please choose a different one.", "danger")
+            return redirect(url_for("register"))
+
+        finally:
+            conn.close()
+
+    # If GET, just render the registration page
+    return render_template("registration.html")
+
+
+
+
 
 # -------------- EXISTING CODE --------------
 
