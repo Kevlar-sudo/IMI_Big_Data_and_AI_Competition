@@ -1,14 +1,63 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for, flash
 import pandas as pd
 from sklearn.ensemble import IsolationForest
 import sqlite3
 import logging
 
+# NEW: Import for password hashing (optional)
+from werkzeug.security import generate_password_hash, check_password_hash
+
 app = Flask(__name__)
+
+# NEW: Secret key is required for session management
+app.secret_key = "someRandomSecretKey"  # Use a strong, random value for production
 
 DB_NAME = 'mydatabase.db'
 
-# --- Data Loading and Preprocessing (from database) ---
+# NEW: Example of a mock user dictionary, storing hashed passwords
+# In production, retrieve user credentials from a database
+mock_users = {
+    # Username : hashed_password
+    "testuser": generate_password_hash("testpassword")
+}
+
+# -------------- LOGIN ROUTES --------------
+
+@app.route("/auth-login", methods=["GET", "POST"])
+def login():
+    """
+    Displays the login form on GET.
+    Processes the form on POST (checks user credentials).
+    """
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        
+        # Get the hashed password from mock_users (or your DB)
+        user_hashed_pw = mock_users.get(username)
+
+        if user_hashed_pw and check_password_hash(user_hashed_pw, password):
+            session["username"] = username
+            flash("You have successfully logged in.", "success")
+            return redirect(url_for("index"))
+        else:
+            flash("Invalid username or password. Please try again.", "danger")
+            return redirect(url_for("login"))
+
+    # If GET, just render the login page
+    return render_template("auth_login.html")
+
+
+@app.route("/logout")
+def logout():
+    """
+    Logs out the current user by removing 'username' from the session.
+    """
+    session.pop("username", None)
+    flash("You have been logged out.", "info")
+    return redirect(url_for("login"))
+
+# -------------- EXISTING CODE --------------
 
 def load_atm_data():
     """Loads and preprocesses ATM transaction data from the database."""
@@ -52,7 +101,6 @@ def load_kyc_data():
         conn.close()
 
 
-# --- Feature Engineering ---
 def create_features(df):
     """Creates features from ATM transaction data."""
     features = df.groupby('customer_id').agg(
@@ -70,8 +118,6 @@ def create_features(df):
 
     return features
 
-
-# --- Anomaly Detection Model ---
 
 def train_anomaly_detection_model(features):
     """Trains a simple Isolation Forest model."""
@@ -107,9 +153,12 @@ if atm_data is not None and kyc_data is not None:
     anomalies = detect_anomalies(model, features)
 
     # --- Merge anomaly scores and flags back into the main ATM data ---
-    atm_data = atm_data.merge(anomalies[['anomaly', 'anomaly_score']], left_on='customer_id', right_index=True,
-                              how='left')
-
+    atm_data = atm_data.merge(
+        anomalies[['anomaly', 'anomaly_score']],
+        left_on='customer_id',
+        right_index=True,
+        how='left'
+    )
 
     # --- Rule-Based System ---
     def apply_rules(df):
@@ -134,7 +183,6 @@ if atm_data is not None and kyc_data is not None:
 
         return df
 
-
     atm_data = apply_rules(atm_data)
 
     # --- Prepare data for the frontend ---
@@ -150,21 +198,34 @@ if atm_data is not None and kyc_data is not None:
 else:
     logging.error("Error: Data loading or preprocessing failed.")
     alerts_data = []
+
 print(len(alerts_data))
 
+
+# -------------- PROTECTED ROUTES --------------
+# Notice we check for a logged-in user in the index route.
 
 @app.route('/')
 def index():
     """Homepage with a link to the lookup feature."""
+    # NEW: If user is not logged in, redirect to login page.
+    if "username" not in session:
+        return redirect(url_for("login"))
     return render_template('index_mvp.html')
 
 @app.route('/get_alerts', methods=['GET'])
 def get_alerts():
     logging.info(f"Alerts data: {alerts_data}")  # Log the data being sent
     return jsonify(alerts_data)
+
 @app.route('/lookup', methods=['GET', 'POST'])
 def lookup_item():
     """Lookup and display a record based on the given eft_id."""
+    # NEW: If user is not logged in, redirect to login page.
+    if "username" not in session:
+        flash("Please log in first.", "warning")
+        return redirect(url_for("login"))
+
     record = None
     if request.method == 'POST':
         eft_id = request.form.get('eftId')
@@ -179,11 +240,21 @@ def lookup_item():
 
 @app.route('/alert_details')
 def alert_details_page():
+    # NEW: If user is not logged in, redirect to login page.
+    if "username" not in session:
+        flash("Please log in first.", "warning")
+        return redirect(url_for("login"))
+
     return render_template('alert_details.html')
 
 @app.route('/get_alert/<alert_id>')
 def get_alert_details(alert_id):
-    # Assuming 'abm' is your table and 'abm_id' is the unique identifier
+    # NEW: If user is not logged in, redirect to login page.
+    if "username" not in session:
+        flash("Please log in first.", "warning")
+        return redirect(url_for("login"))
+
+    # Assuming 'abm_id' is the unique identifier in the 'abm' table
     alert = None
     for a in alerts_data:
         if a['abm_id'] == alert_id:
@@ -196,10 +267,6 @@ def get_alert_details(alert_id):
     else:
         return jsonify({'error': 'Alert not found'}), 404
 
+
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-
-
-

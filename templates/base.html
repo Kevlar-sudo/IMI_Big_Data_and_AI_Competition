@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>My Flask App</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='/static/style.css') }}" />
 </head>
 <body>
   <!-- Navigation or common layout elements could go here -->
@@ -16,6 +16,6 @@
   {% block content %}
   {% endblock %}
 
-  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ url_for('static', filename='/static/script.js') }}"></script>
 </body>
 </html>
