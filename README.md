@@ -21,10 +21,11 @@ Ensure you have the following installed:
 
 ## Run App:
 To Run the web-app, in terminal type:
-*- python database.py 
+- python database.py*
+- python user_table.py*
 - python app.py 
 
-*: You will need to first run the database inserter python script to be able to run critical functions of the application
+*: You will need to first run the database inserter python script(s) to be able to run critical functions of the application, you do not have to rerun these scripts everytime you want to run the app (only the first time and when you want to clear the databases)
 
 
 ## Access App:
