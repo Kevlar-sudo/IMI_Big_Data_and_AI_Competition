@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>TDIS - AML Alert Dashboard</title>
+  <title>ScotiaShield Alert Dashboard</title>
   <link rel="stylesheet" href="/static/style.css">
   <style>
     /* Reset & Basic Setup */
@@ -17,7 +17,7 @@
     }
     /* Full-Page Gradient (Sky Blue -> Soft Pink) */
     body {
-      background: linear-gradient(180deg, #fffF 0%, #fffF 100%);
+      background: linear-gradient(180deg, #ffff 0%, #ffff 100%);
       background-size: cover;
       background-repeat: no-repeat;
     }
@@ -63,6 +63,23 @@
       font-size: 1.1em;
       color: #333;
     }
+    /* Toggle Filters Button */
+    #toggle-filters-btn {
+      display: block;
+      width: 200px;
+      margin: 0 auto 1em auto;
+      padding: 0.75em 1.5em;
+      background-color: #D22630;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      text-align: center;
+    }
+    #toggle-filters-btn:hover {
+      background-color: #B81F29;
+    }
     /* Filters Section */
     #filters {
       background: rgba(255, 255, 255, 0.9);
@@ -71,6 +88,7 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       margin: 0 auto 2em;
       max-width: 800px;
+      display: none; /* Initially hidden */
     }
     #filters h3 {
       margin-bottom: 1em;
@@ -112,7 +130,7 @@
     }
     /* Alert List Section (unchanged) */
     #alert-list {
-      /* Existing styling (could be defined in your external stylesheet) */
+      /* Alert items will be loaded here via your script.js */
     }
   </style>
 </head>
@@ -131,7 +149,11 @@
   
   <!-- Page Header -->
   <h1>AML Alert Dashboard</h1>
+  <!-- Optionally, you can add alert count here -->
   <!-- <p>Number of alerts loaded: {{ alert_count }}</p> -->
+  
+  <!-- Toggle Filters Button -->
+  <button id="toggle-filters-btn">Show Filters</button>
   
   <!-- Filters Section -->
   <div id="filters">
@@ -211,11 +233,30 @@
     <button id="apply-filters-btn">Apply Filters</button>
   </div>
   
-  <!-- Alert List Section (unchanged) -->
+  <!-- Alert List Section -->
   <div id="alert-list">
     <!-- Alert items will be loaded here via your script.js -->
   </div>
   
   <script src="/static/script.js"></script>
+  <script>
+    // Toggle functionality for the filters section
+    document.addEventListener('DOMContentLoaded', function() {
+      const toggleBtn = document.getElementById('toggle-filters-btn');
+      const filtersSection = document.getElementById('filters');
+      let filtersVisible = false;
+      
+      toggleBtn.addEventListener('click', function() {
+        filtersVisible = !filtersVisible;
+        if (filtersVisible) {
+          filtersSection.style.display = 'block';
+          toggleBtn.textContent = 'Hide Filters';
+        } else {
+          filtersSection.style.display = 'none';
+          toggleBtn.textContent = 'Show Filters';
+        }
+      });
+    });
+  </script>
 </body>
 </html>
