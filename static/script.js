@@ -12,7 +12,7 @@ function createAlertCard(alert) {
     card.classList.add('low');
   }
 
-  // Build the card content (without a separate "View Details" button)
+  // Build the card content using a template literal
   card.innerHTML = `
       <h3>Alert ID: ${alert.abm_id || 'N/A'}</h3>
       <p><strong>Customer ID:</strong> ${alert.customer_id}</p>
@@ -25,6 +25,38 @@ function createAlertCard(alert) {
       <p><strong>Risk Score:</strong> ${alert.anomaly_score.toFixed(2)}</p>
       <p><strong>Rule Based Flag:</strong> ${alert.rule_based_flag}</p>
   `;
+
+  // Create a star button for flagging the alert
+  const starButton = document.createElement('button');
+  starButton.classList.add('star-button');
+  // Default to an empty star
+  starButton.innerHTML = '☆';
+
+  // Persist the flagged state using localStorage (using alert.abm_id as key)
+  const storageKey = `starred-${alert.abm_id}`;
+  let isStarred = localStorage.getItem(storageKey) === 'true';
+  if (isStarred) {
+    starButton.classList.add('starred');
+    starButton.innerHTML = '★';
+  }
+
+  // Toggle star state on click
+  starButton.addEventListener('click', (event) => {
+    // Prevent the card's click event from firing
+    event.stopPropagation();
+    isStarred = !isStarred;
+    if (isStarred) {
+      starButton.classList.add('starred');
+      starButton.innerHTML = '★';
+    } else {
+      starButton.classList.remove('starred');
+      starButton.innerHTML = '☆';
+    }
+    localStorage.setItem(storageKey, isStarred);
+  });
+
+  // Append the star button to the card
+  card.appendChild(starButton);
 
   // Make the entire card clickable to show alert details
   card.addEventListener('click', () => {
@@ -135,7 +167,6 @@ applyFiltersBtn.addEventListener('click', fetchAndDisplayAlerts);
 
 // Initial fetch and display of alerts
 fetchAndDisplayAlerts();
-
 
 // Function to show alert details in a dialog
 function showAlertDialog(alert) {
@@ -250,12 +281,10 @@ function showAlertDialog(alert) {
     tab.addEventListener('click', function(event) {
       event.preventDefault();
       const targetId = this.getAttribute('href').substring(1);
-
       // Deactivate all tabs and hide all content sections
       tabs.forEach(t => t.classList.remove('active-tab'));
       const allContentSections = dialog.querySelectorAll('.tab-content');
       allContentSections.forEach(section => section.style.display = 'none');
-
       // Activate the clicked tab and show the corresponding content
       this.classList.add('active-tab');
       document.getElementById(targetId).style.display = 'block';

@@ -88,6 +88,46 @@
       font-size: 1.1em;
       color: #333;
     }
+    /* Alert List & Cards */
+    #alert-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 1em;
+    }
+    .alert-card {
+      position: relative; /* Required for star button positioning */
+      border: 1px solid #ccc;
+      padding: 10px;
+      width: 300px;
+      background-color: #fff;
+      border-radius: 4px;
+      /* For demonstration: you can style high/medium/low with borders or left color bars */
+    }
+    .alert-card.high {
+      border-left: 5px solid red;
+    }
+    .alert-card.medium {
+      border-left: 5px solid orange;
+    }
+    .alert-card.low {
+      border-left: 5px solid green;
+    }
+    /* Star Button */
+    .star-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.5em;
+      color: #ccc; /* Default color for unstarred */
+      transition: color 0.2s ease;
+    }
+    .star-button.starred {
+      color: gold;  /* Starred (favorite) color */
+    }
     /* Filters Sidebar */
     #filters {
       position: fixed;
@@ -191,7 +231,7 @@
         <span class="bar"></span>
         <span class="bar"></span>
       </button>
-      <a href="{{ url_for('index') }}">ScotiaShield&trade;</a>
+      <a href="{{ url_for('index') }}">ScotiaShield&trade; - Alert Dashboard</a>
     </div>
     <ul class="nav-links">
         <li><a href="{{ url_for('show_base') }}">Home</a></li>
@@ -201,8 +241,8 @@
     </ul>
   </nav>
   
-  <!-- Page Header -->
-  <h1>AML Alert Dashboard</h1>
+  <!-- Page Header
+  <h1>AML Alert Dashboard</h1> -->
   
   <!-- Alert List Section -->
   <div id="alert-list">

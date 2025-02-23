@@ -251,3 +251,29 @@ body {
 .min-max-group input[type="number"] {
   width: 80px;            /* Adjust as needed */
 }
+
+.star-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5em;
+    color: #ccc;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  
+  .star-button.starred {
+    color: gold;
+  }
+
+  #alert-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 1em;
+    justify-content: center; /* Centers cards horizontally */
+    /* align-items: center;   Centers cards vertically if there's extra height */
+  }
+  
+  
