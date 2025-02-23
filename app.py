@@ -261,18 +261,47 @@ print(len(alerts_data))
 # -------------- PROTECTED ROUTES --------------
 # Notice we check for a logged-in user in the index route.
 
+@app.route('/base')
+def show_base():
+    """
+    Route to directly render base.html for testing/design purposes.
+    Typically, base.html is used as a parent template,
+    but this route allows you to open it directly in your browser.
+    """
+    return render_template('base.html')
+
+
+
+
+
+
+
+
+
+
 @app.route('/')
 def index():
     """Homepage with a link to the lookup feature."""
     # NEW: If user is not logged in, redirect to login page.
     if "username" not in session:
         return redirect(url_for("login"))
-    return render_template('index_mvp.html')
+    return render_template('base.html')
 
 @app.route('/get_alerts', methods=['GET'])
 def get_alerts():
     logging.info(f"Alerts data: {alerts_data}")  # Log the data being sent
     return jsonify(alerts_data)
+
+
+@app.route('/explore')
+def explore():
+    """
+    Explore page that can also be protected or public, 
+    depending on your requirements.
+    """
+    if "username" not in session:
+        return redirect(url_for("login"))
+    return render_template('index_mvp.html')
 
 @app.route('/lookup', methods=['GET', 'POST'])
 def lookup_item():
