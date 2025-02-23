@@ -220,3 +220,34 @@ body {
     padding: 8px;
     border: 1px solid #ddd;
 }
+
+/* Make typed text visible and background white */
+#filters input[type="text"],
+#filters input[type="number"],
+#filters select {
+  padding: 0.5em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  height: 40px;
+  font-size: 1em;
+  color: #000;            /* Ensures typed text is black */
+  background-color: #fff; /* Ensures field background is white */
+}
+
+/* Put the "Min" and "Max" fields on the same line with the label */
+.min-max-group {
+  display: flex;          /* Flex container */
+  align-items: center;    /* Vertically center items */
+  gap: 0.5em;             /* Space between items */
+  margin-bottom: 0.8em;
+}
+
+.min-max-group label {
+  margin-bottom: 0;       /* Remove default label margin */
+  flex-shrink: 0;         /* Prevent label from shrinking */
+}
+
+.min-max-group input[type="number"] {
+  width: 80px;            /* Adjust as needed */
+}

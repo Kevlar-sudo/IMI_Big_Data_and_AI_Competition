@@ -63,9 +63,13 @@ def logout():
     """
     Logs out the current user by removing 'username' from the session.
     """
-    session.pop("username", None)
-    flash("You have been logged out.", "info")
+    if "username" in session:
+        session.pop("username", None)
+        flash("You have been logged out.", "info")
+    else:
+        flash("You are not currently logged in.", "warning")
     return redirect(url_for("login"))
+
 
 
 
@@ -269,6 +273,10 @@ def show_base():
     but this route allows you to open it directly in your browser.
     """
     return render_template('base.html')
+
+@app.route('/about')
+def show_about():
+    return render_template('about.html')
 
 
 @app.route('/')
