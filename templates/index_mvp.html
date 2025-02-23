@@ -1,90 +1,221 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>TDIS - AML Alert Dashboard</title>
-    <link rel="stylesheet" href="/static/style.css">
+  <meta charset="UTF-8">
+  <title>TDIS - AML Alert Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    /* Reset & Basic Setup */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+    }
+    /* Full-Page Gradient (Sky Blue -> Soft Pink) */
+    body {
+      background: linear-gradient(180deg, #fffF 0%, #fffF 100%);
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+    /* Navigation Bar */
+    .navbar {
+      background-color: #D22630;  /* Scotiabank Red */
+      padding: 1em 2em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .navbar .nav-brand a {
+      color: #fff;
+      font-size: 1.8em;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    .navbar .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 1em;
+    }
+    .navbar .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      padding: 0.5em 1em;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+    .navbar .nav-links a:hover {
+      background-color: #B81F29;
+    }
+    /* Page Header */
+    h1 {
+      text-align: center;
+      margin: 1.5em 0 0.5em;
+      color: #D22630;
+    }
+    p {
+      text-align: center;
+      margin-bottom: 1.5em;
+      font-size: 1.1em;
+      color: #333;
+    }
+    /* Filters Section */
+    #filters {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 1.5em;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin: 0 auto 2em;
+      max-width: 800px;
+    }
+    #filters h3 {
+      margin-bottom: 1em;
+      color: #D22630;
+      text-align: center;
+    }
+    #filters div {
+      margin-bottom: 0.8em;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+    }
+    #filters label {
+      min-width: 150px;
+      font-weight: bold;
+      color: #333;
+    }
+    #filters input[type="text"],
+    #filters input[type="number"],
+    #filters select {
+      padding: 0.5em;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      flex: 1;
+    }
+    #apply-filters-btn {
+      background-color: #D22630;
+      color: #fff;
+      border: none;
+      padding: 0.75em 1.5em;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      display: block;
+      margin: 1em auto 0;
+    }
+    #apply-filters-btn:hover {
+      background-color: #B81F29;
+    }
+    /* Alert List Section (unchanged) */
+    #alert-list {
+      /* Existing styling (could be defined in your external stylesheet) */
+    }
+  </style>
 </head>
 <body>
-    <h1>AML Alert Dashboard</h1>
-    <div id="filters">
-        <h3>Filters</h3>
-        <div>
-            <label for="customer-id-filter">Customer ID:</label>
-            <input type="text" id="customer-id-filter">
-        </div>
-        <div>
-            <label for="transaction-type-filter">Transaction Type:</label>
-            <select id="transaction-type-filter">
-                <option value="">All</option>
-                <option value="ATM">ATM</option>
-                <option value="EFT">EFT</option>
-                <option value="EMT">EMT</option>
-                <option value="WIRE">WIRE</option>
-                <option value="CARD">CARD</option>
-                <option value="CHEQUE">CHEQUE</option>
-             </select>
-        </div>
-        <div class="min-max-group">
-            <label for="amount-filter">Amount (CAD):</label>
-            <input type="number" id="amount-min-filter" placeholder="Min">
-            <label>-</label>
-            <input type="number" id="amount-max-filter" placeholder="Max">
-        </div>
-        <div class="min-max-group">
-            <label for="risk-score-filter">Risk Score:</label>
-            <input type="number" id="risk-score-min-filter" placeholder="Min">
-            <label>-</label>
-            <input type="number" id="risk-score-max-filter" placeholder="Max">
-        </div>
-        <div>
-            <label for="rule-based-flag-filter">Rule-Based Flag:</label>
-            <select id="rule-based-flag-filter">
-                <option value="">All</option>
-                <option value="1">Yes</option>
-                <option value="0">No</option>
-            </select>
-        </div>
-        <div>
-            <label for="cash-indicator-filter">Cash Indicator:</label>
-            <select id="cash-indicator-filter">
-                <option value="">All</option>
-                <option value="1">Yes</option>
-                <option value="0">No</option>
-            </select>
-        </div>
-        <div>
-            <label for="country-filter">Country:</label>
-            <input type="text" id="country-filter">
-        </div>
-        <div>
-            <label for="province-filter">Province:</label>
-            <input type="text" id="province-filter">
-        </div>
-        <div>
-            <label for="city-filter">City:</label>
-            <input type="text" id="city-filter">
-        </div>
-        <div>
-            <label for="industry-code-filter">Industry Code:</label>
-            <input type="text" id="industry-code-filter">
-        </div>
-        <div class="min-max-group">
-            <label for="employee-count-filter">Employee Count:</label>
-            <input type="number" id="employee-count-min-filter" placeholder="Min">
-            <label>-</label>
-            <input type="number" id="employee-count-max-filter" placeholder="Max">
-        </div>
-        <div class="min-max-group">
-            <label for="sales-filter">Sales:</label>
-            <input type="number" id="sales-min-filter" placeholder="Min">
-            <label>-</label>
-            <input type="number" id="sales-max-filter" placeholder="Max">
-        </div>
-        <button id="apply-filters-btn">Apply Filters</button>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <a href="{{ url_for('index') }}">ScotiaShield&trade;</a>
     </div>
-    <div id="alert-list">
-        </div>
-a
-    <script src="/static/script.js"></script>
+    <ul class="nav-links">
+      <li><a href="{{ url_for('explore') }}">Explore</a></li>
+      <li><a href="{{ url_for('login') }}">Login</a></li>
+      <li><a href="{{ url_for('register') }}">Register</a></li>
+    </ul>
+  </nav>
+  
+  <!-- Page Header -->
+  <h1>AML Alert Dashboard</h1>
+  <p>Number of alerts loaded: {{ alert_count }}</p>
+  
+  <!-- Filters Section -->
+  <div id="filters">
+    <h3>Filters</h3>
+    <div>
+      <label for="customer-id-filter">Customer ID:</label>
+      <input type="text" id="customer-id-filter">
+    </div>
+    <div>
+      <label for="transaction-type-filter">Transaction Type:</label>
+      <select id="transaction-type-filter">
+        <option value="">All</option>
+        <option value="ATM">ATM</option>
+        <option value="EFT">EFT</option>
+        <option value="EMT">EMT</option>
+        <option value="WIRE">WIRE</option>
+        <option value="CARD">CARD</option>
+        <option value="CHEQUE">CHEQUE</option>
+      </select>
+    </div>
+    <div class="min-max-group">
+      <label for="amount-filter">Amount (CAD):</label>
+      <input type="number" id="amount-min-filter" placeholder="Min">
+      <label>-</label>
+      <input type="number" id="amount-max-filter" placeholder="Max">
+    </div>
+    <div class="min-max-group">
+      <label for="risk-score-filter">Risk Score:</label>
+      <input type="number" id="risk-score-min-filter" placeholder="Min">
+      <label>-</label>
+      <input type="number" id="risk-score-max-filter" placeholder="Max">
+    </div>
+    <div>
+      <label for="rule-based-flag-filter">Rule-Based Flag:</label>
+      <select id="rule-based-flag-filter">
+        <option value="">All</option>
+        <option value="1">Yes</option>
+        <option value="0">No</option>
+      </select>
+    </div>
+    <div>
+      <label for="cash-indicator-filter">Cash Indicator:</label>
+      <select id="cash-indicator-filter">
+        <option value="">All</option>
+        <option value="1">Yes</option>
+        <option value="0">No</option>
+      </select>
+    </div>
+    <div>
+      <label for="country-filter">Country:</label>
+      <input type="text" id="country-filter">
+    </div>
+    <div>
+      <label for="province-filter">Province:</label>
+      <input type="text" id="province-filter">
+    </div>
+    <div>
+      <label for="city-filter">City:</label>
+      <input type="text" id="city-filter">
+    </div>
+    <div>
+      <label for="industry-code-filter">Industry Code:</label>
+      <input type="text" id="industry-code-filter">
+    </div>
+    <div class="min-max-group">
+      <label for="employee-count-filter">Employee Count:</label>
+      <input type="number" id="employee-count-min-filter" placeholder="Min">
+      <label>-</label>
+      <input type="number" id="employee-count-max-filter" placeholder="Max">
+    </div>
+    <div class="min-max-group">
+      <label for="sales-filter">Sales:</label>
+      <input type="number" id="sales-min-filter" placeholder="Min">
+      <label>-</label>
+      <input type="number" id="sales-max-filter" placeholder="Max">
+    </div>
+    <button id="apply-filters-btn">Apply Filters</button>
+  </div>
+  
+  <!-- Alert List Section (unchanged) -->
+  <div id="alert-list">
+    <!-- Alert items will be loaded here via your script.js -->
+  </div>
+  
+  <script src="/static/script.js"></script>
 </body>
-</html>a
+</html>
