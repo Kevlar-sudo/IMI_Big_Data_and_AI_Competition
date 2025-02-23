@@ -108,6 +108,15 @@ FILE_TABLE_MAPPING = {
             "name": "TEXT"
         }
     },
+
+    "final_anomalies(in).csv": {
+        "table_name": "final_anomalies",
+        "columns": {
+            "customer_id": "TEXT PRIMARY KEY"
+        }
+    },
+
+
     "wire.csv": {
         "table_name": "wire",
         "columns": {
@@ -118,6 +127,8 @@ FILE_TABLE_MAPPING = {
             "transaction_date": "TEXT",
             "transaction_time": "TEXT"
         }
+
+    
     }
 }
 

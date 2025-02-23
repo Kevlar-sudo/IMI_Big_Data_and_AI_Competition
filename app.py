@@ -119,7 +119,7 @@ def load_atm_data():
     """Loads and preprocesses ATM transaction data from the database."""
     conn = sqlite3.connect(DB_NAME)
     try:
-        query = "SELECT * FROM abm"  # Assuming 'abm' table for ATM data
+        query = "SELECT * FROM abm INNER JOIN final_anomalies USING (customer_id)"  # Assuming 'abm' table for ATM data
         df = pd.read_sql_query(query, conn)
 
         # Basic preprocessing
@@ -271,14 +271,6 @@ def show_base():
     return render_template('base.html')
 
 
-
-
-
-
-
-
-
-
 @app.route('/')
 def index():
     """Homepage with a link to the lookup feature."""
@@ -296,12 +288,14 @@ def get_alerts():
 @app.route('/explore')
 def explore():
     """
-    Explore page that can also be protected or public, 
+    Explore page that can also be protected or public,
     depending on your requirements.
     """
     if "username" not in session:
         return redirect(url_for("login"))
-    return render_template('index_mvp.html')
+    alert_count = len(alerts_data)
+    return render_template('index_mvp.html', alert_count=alert_count)
+
 
 @app.route('/lookup', methods=['GET', 'POST'])
 def lookup_item():
