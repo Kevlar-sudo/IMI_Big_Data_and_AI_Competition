@@ -7,3 +7,6 @@ venv/
 
 #ignore our database file
 mydatabase.db
+
+
+*.tar
