@@ -79,7 +79,7 @@ output/combined.err.log
 
 
 **⚠️ Important:**  
-- The Docker image can take **1 to 1.5 hours** to build and run due to dependency installations and data processing.  
+- The Docker image can take **1 to 1.5 hours** to run due to dependency installations and data processing.  
 - Ensure you have at least **16 GB of disk space** available.
 
 
