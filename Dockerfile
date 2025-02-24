@@ -1,30 +1,29 @@
-FROM python:3.11-slim
+# Use Base Python 3.10.13 Docker image
+FROM python:3.10.13-slim
 
-# Install OS-level dependencies for building Python packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    gcc \
-    libssl-dev \
-    libffi-dev \
-    libxml2-dev \
-    libxslt-dev \
-    libgl1 \
-    libglib2.0-0 \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set the working directory
+# Set working directory
 WORKDIR /app
 
-# Install dependencies
+# Copy requirements.txt and install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# ✅ Copy everything, including the 'csv_files' folder
-COPY . .
-COPY csv_files /app/csv_files
+# Install papermill and Jupyter
+RUN pip install --no-cache-dir papermill jupyter
 
-# Expose port 5000 if needed
-EXPOSE 5000
+# Install Supervisor
+RUN apt-get update && apt-get install -y supervisor
 
-# Command to run the application
-CMD ["python", "app.py"]
+# Copy Jupyter notebooks, individual CSV files, and supervisord.conf into the notebooks directory
+COPY notebooks /app/notebooks
+COPY csv_files/* /app/notebooks/  
+COPY supervisord.conf /etc/supervisor/supervisord.conf
+
+# Ensure output directory exists
+RUN mkdir -p /mnt/output
+
+# Set permissions for the notebooks directory and output folder
+RUN chmod -R 777 /app/notebooks /mnt/output
+
+# Define entrypoint to run supervisord
+ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
